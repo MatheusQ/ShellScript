@@ -1,0 +1,34 @@
+#!/bin/bash
+
+###################################################
+# COMANDOS DE ATUALIZAÇÃO DO SISTEMA E DOS
+# SOFTWARES
+###################################################
+aptitude update
+aptitude -y full-upgrade
+###################################################
+
+
+
+###################################################
+# VARIAVEIS
+# IMPORTANTE SER DEPOIS DOS COMANDOS DE ATUALIZAÇÃO
+###################################################
+currentKernel=$(uname -r)
+kernelUpgraded=$(ls /lib/modules/ | grep -e "-v")
+###################################################
+
+
+
+###################################################
+# A CONDIÇÃO A SEGUIR VERIFICA SE HOUVE ATUALIZAÇÃO
+# DO KERNEL. SE SIM, HAVERÁ DIFIRENÇA ENTRE A VERSÃO
+# DO COMANDO uname -r E DO DIRETÓRIO DENTRO DE LIB.
+# HAVENDO DIFERENÇA, É COMPILADA UMA NOVA IMAGEM
+# INITRAM
+###################################################
+if [ "$kernelUpgraded" != "$currentKernel" ]
+then
+	mkinitramfs -v $kernelUpgraded -o /boot/initramfs.gz
+fi
+
